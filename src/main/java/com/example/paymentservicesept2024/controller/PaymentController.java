@@ -4,6 +4,7 @@ import com.example.paymentservicesept2024.dto.PaymentRequestDTO;
 import com.example.paymentservicesept2024.dto.PaymentResponseDTO;
 import com.example.paymentservicesept2024.model.PaymentResponse;
 import com.example.paymentservicesept2024.service.iPaymentService;
+import com.razorpay.RazorpayException;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,7 +24,7 @@ public class PaymentController {
     }
 
     @PostMapping("/payment/customer")
-    public PaymentResponseDTO makePayment(@RequestBody PaymentRequestDTO paymentRequestDTO) {
+    public PaymentResponseDTO makePayment(@RequestBody PaymentRequestDTO paymentRequestDTO) throws RazorpayException {
         // S1. Validate the input.
         if (!isValidRequest(paymentRequestDTO)) {
             // throw exceptions from here or return ResponseEntity with proper message
@@ -36,7 +37,6 @@ public class PaymentController {
         PaymentResponse response = paymentService.initiatePayment(paymentRequestDTO.getCustomerId(),
                 paymentRequestDTO.getAmount(),
                 paymentRequestDTO.getOrderId());
-
         // S4. convert and return
         return convertToPaymentResponseDTO(response);
     }
